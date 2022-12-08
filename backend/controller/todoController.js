@@ -154,3 +154,27 @@ exports.editTask = async (req, res) => {
     console.log("The error in editTask controller ", error);
   }
 };
+
+exports.search = async (req, res) => {
+  try {
+    const {searchText} = req.body
+    console.log(typeof(searchText))
+    
+    const searchTodo = await Todo.aggregate().search({
+      index: "search-todo-task",
+      text: {
+        query: searchText,
+        path: ["todo","task"]
+      }
+    });
+    
+    res.status(200).json({
+      success: true,
+      message: 'Search result are',
+      searchTodo
+    })
+  } catch (error) {
+    console.log('error in search controller ',error)
+  }
+  
+}
