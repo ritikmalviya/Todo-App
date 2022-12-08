@@ -13,7 +13,6 @@ const Todo = require("../model/TodoSchema");
     8. editTask
 */
 
-
 exports.home = (req, res) => {
   res.send("Hello world");
 };
@@ -30,28 +29,27 @@ exports.createTodo = async (req, res) => {
 
 exports.addTask = async (req, res) => {
   try {
-      const {id,taskTitle} = req.body
+    const { id, taskTitle } = req.body;
 
-      //check if id is given and exists
-      if(!id && !taskTitle) throw new Error("Id and Task title must be passed")
-     
-      //check if todo exist with this id
-      const todo = await Todo.findById(id)
-      if(!id) throw new Error('Todo is not exist in DB')
+    //check if id is given and exists
+    if (!id && !taskTitle) throw new Error("Id and Task title must be passed");
 
-      //insert task
-      todo.task.push({taskTitle: taskTitle})
-      const updatedTask = await Todo.findByIdAndUpdate(id , todo);
-      
-      // return the todo 
-      res.status(200).json({
-        success: true,
-        message: 'task added',
-        updatedTask
-      })
+    //check if todo exist with this id
+    const todo = await Todo.findById(id);
+    if (!id) throw new Error("Todo is not exist in DB");
 
+    //insert task
+    todo.task.push({ taskTitle: taskTitle });
+    const updatedTask = await Todo.findByIdAndUpdate(id, todo);
+
+    // return the todo
+    res.status(200).json({
+      success: true,
+      message: "task added",
+      updatedTask,
+    });
   } catch (error) {
-    console.log("Add Task: ",error)
+    console.log("Add Task: ", error);
   }
 };
 
@@ -84,35 +82,35 @@ exports.deleteTodo = async (req, res) => {
     res.status(200).json({
       success: true,
       message: "deleted the todo",
-      deletedTodo
-    })
+      deletedTodo,
+    });
   } catch (error) {
     console.log(error.message);
   }
 };
 
 exports.deleteTask = async (req, res) => {
-    try {
-      // get the data 
-      const {todoId, taskId} = req.body;
+  try {
+    // get the data
+    const { todoId, taskId } = req.body;
 
-      //validate the data is given or not
-      if(!todoId && taskId) throw new Error("Plase enter todo id and task id")
-      
-      //find the todo where the task is getting deleted
-      const todoWhereTaskDelete = await Todo.findById(todoId)
+    //validate the data is given or not
+    if (!todoId && taskId) throw new Error("Plase enter todo id and task id");
 
-      todoWhereTaskDelete.task.pull({_id: taskId})
-      todoWhereTaskDelete.save();
-      res.status(200).json({
-        success: true,
-        message: "Task deleted",
-        todoWhereTaskDelete,
-      });
-    } catch (error) {
-      console.log("there is error in deleteTask: ",error)
-    }
-}
+    //find the todo where the task is getting deleted
+    const todoWhereTaskDelete = await Todo.findById(todoId);
+
+    todoWhereTaskDelete.task.pull({ _id: taskId });
+    todoWhereTaskDelete.save();
+    res.status(200).json({
+      success: true,
+      message: "Task deleted",
+      todoWhereTaskDelete,
+    });
+  } catch (error) {
+    console.log("there is error in deleteTask: ", error);
+  }
+};
 
 exports.editTodo = async (req, res) => {
   try {
@@ -128,3 +126,31 @@ exports.editTodo = async (req, res) => {
   }
 };
 
+exports.editTask = async (req, res) => {
+  try {
+    const {taskId, editedTask } = req.body;
+    
+    
+    if (!taskId && !editedTask)
+      throw new Error("Please provide task id and editedTask");
+    
+    //find the task with task id and update it
+      await Todo.updateOne(
+        { "task._id": taskId },
+        {
+          $set: {
+            "task.$.taskTitle": editedTask,
+          },
+        }
+      );
+      const todoUpdate = await Todo.findOne({"task._id":taskId})
+      res.status(200).json({
+        success: true,
+        message: 'Task edited',
+        todoUpdate
+      })
+
+  } catch (error) {
+    console.log("The error in editTask controller ", error);
+  }
+};
