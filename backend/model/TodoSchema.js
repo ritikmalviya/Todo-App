@@ -1,5 +1,14 @@
 const mongoose = require('mongoose')
 
+
+/* 
+    Todo Schema consist Two values 
+    1. Todo Title
+    2. Task Array
+    both have the timestamps 
+    Task have 'isDone' boolean
+*/
+
 const todoSchema = new mongoose.Schema(
     {
         todo: {
@@ -7,7 +16,15 @@ const todoSchema = new mongoose.Schema(
             require: [true, 'Name is Required'],
             trim: true
         },
-        task: [String]
+        task: [{
+            taskTitle:String,
+            isDone:{
+                type:Boolean,
+                default:false
+            }
+        }],
+    },{
+        timestamps: true,
     }
 ) 
 
