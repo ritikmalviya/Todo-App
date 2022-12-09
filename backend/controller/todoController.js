@@ -18,13 +18,25 @@ exports.home = (req, res) => {
 };
 
 exports.createTodo = async (req, res) => {
-  const { todo, task } = req.body;
-
-  if (!todo) {
-    res.status(400).send("Enter the Todo Name");
+  try {
+    const { todo, taskTitle } = req.body;
+  
+    if (!todo) {
+      res.status(400).send("Enter the Todo Name");
+    }
+    const todoData = {
+      todo: todo,
+      task: [{
+        taskTitle: taskTitle
+      }]
+    } 
+    const newTodo = await Todo.create(todoData);
+    res.status(200).send(newTodo);
+    
+  } catch (error) {
+      console.log(error)
   }
-  const newTodo = await Todo.create({ todo: todo, task: task });
-  res.status(200).send(newTodo);
+ 
 };
 
 exports.addTask = async (req, res) => {
@@ -158,13 +170,14 @@ exports.editTask = async (req, res) => {
 exports.search = async (req, res) => {
   try {
     const {searchText} = req.body
-    console.log(typeof(searchText))
     
     const searchTodo = await Todo.aggregate().search({
       index: "search-todo-task",
       text: {
         query: searchText,
-        path: ["todo","task"]
+        path: {
+          'wildcard':'*'
+        }
       }
     });
     
