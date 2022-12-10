@@ -20,9 +20,9 @@ router.post('/addTask',addTask)
 router.get('/getTodos',getTodos)
 router.get('/getTodo/:id',getTodo)
 router.delete('/deleteTodo/:id',deleteTodo)
-router.delete("/deleteTask", deleteTask);
+router.delete('/deleteTask/', deleteTask);
 router.put('/editTodo/:id',editTodo)
 router.put("/editTask", editTask);
-router.get('/search', search)
+router.get('/search/:search', search)
 
 module.exports = router;

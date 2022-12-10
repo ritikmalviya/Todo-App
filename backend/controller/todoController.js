@@ -105,13 +105,13 @@ exports.deleteTask = async (req, res) => {
   try {
     // get the data
     const { todoId, taskId } = req.body;
-
+    console.log(req.body)
     //validate the data is given or not
     if (!todoId && taskId) throw new Error("Plase enter todo id and task id");
-
+    console.log("This is the Task deletion ", todoId, " Task id ", taskId)
+    
     //find the todo where the task is getting deleted
     const todoWhereTaskDelete = await Todo.findById(todoId);
-
     todoWhereTaskDelete.task.pull({ _id: taskId });
     todoWhereTaskDelete.save();
     res.status(200).json({
@@ -141,7 +141,7 @@ exports.editTodo = async (req, res) => {
 exports.editTask = async (req, res) => {
   try {
     const {taskId, editedTask } = req.body;
-    
+    console.log(req.body)
     
     if (!taskId && !editedTask)
       throw new Error("Please provide task id and editedTask");
@@ -156,6 +156,7 @@ exports.editTask = async (req, res) => {
         }
       );
       const todoUpdate = await Todo.findOne({"task._id":taskId})
+      console.log(todoUpdate)
       res.status(200).json({
         success: true,
         message: 'Task edited',
@@ -169,12 +170,12 @@ exports.editTask = async (req, res) => {
 
 exports.search = async (req, res) => {
   try {
-    const {searchText} = req.body
+    const {search} = req.params
     
     const searchTodo = await Todo.aggregate().search({
       index: "search-todo-task",
       text: {
-        query: searchText,
+        query: search,
         path: {
           'wildcard':'*'
         }
