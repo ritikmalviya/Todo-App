@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 
-const {home, createTodo, addTask, getTodos, getTodo, deleteTodo, editTodo, deleteTask, editTask, search} = require('../controller/todoController')
+const {home, createTodo, addTask, getTodos, getTodo, deleteTodo, editTodo, deleteTask, editTask, search, isDone} = require('../controller/todoController')
 
 /*
     * List of Routes
@@ -23,6 +23,7 @@ router.delete('/deleteTodo/:id',deleteTodo)
 router.delete('/deleteTask/', deleteTask);
 router.put('/editTodo/:id',editTodo)
 router.put("/editTask", editTask);
+router.put("/isdone", isDone);
 router.get('/search/:search', search)
 
 module.exports = router;

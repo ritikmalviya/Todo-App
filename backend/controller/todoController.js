@@ -11,6 +11,7 @@ const Todo = require("../model/TodoSchema");
     6. addTask
     7. deleteTask
     8. editTask
+    9. isDone
 */
 
 exports.home = (req, res) => {
@@ -141,7 +142,6 @@ exports.editTodo = async (req, res) => {
 exports.editTask = async (req, res) => {
   try {
     const {taskId, editedTask } = req.body;
-    console.log(req.body)
     
     if (!taskId && !editedTask)
       throw new Error("Please provide task id and editedTask");
@@ -161,6 +161,34 @@ exports.editTask = async (req, res) => {
         success: true,
         message: 'Task edited',
         todoUpdate
+      })
+
+  } catch (error) {
+    console.log("The error in editTask controller ", error);
+  }
+};
+exports.isDone = async (req, res) => {
+  try {
+    const {taskId, isDoneBool } = req.body;
+    
+    if (!taskId )
+      throw new Error("Please provide task id");
+    
+    //find the task with task id and update it
+      await Todo.updateOne(
+        { "task._id": taskId },
+        {
+          $set: {
+            "task.$.isDone": isDoneBool,
+          },
+        }
+      );
+      const taskUpdate = await Todo.findOne({"task._id":taskId})
+      console.log(taskUpdate)
+      res.status(200).json({
+        success: true,
+        message: 'Task edited',
+        taskUpdate
       })
 
   } catch (error) {
