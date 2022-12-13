@@ -20,12 +20,13 @@ exports.home = (req, res) => {
 
 exports.createTodo = async (req, res) => {
   try {
-    const { todo, taskTitle } = req.body;
+    const { todo, taskTitle, userId } = req.body;
   
     if (!todo) {
       res.status(400).send("Enter the Todo Name");
     }
     const todoData = {
+      userId,
       todo: todo,
       task: [{
         taskTitle: taskTitle
@@ -68,7 +69,8 @@ exports.addTask = async (req, res) => {
 
 exports.getTodos = async (req, res) => {
   try {
-    const todos = await Todo.find();
+    const {userId} = req.params
+    const todos = await Todo.find({userId});
     res.json(todos);
   } catch (error) {
     console.log(error.message);

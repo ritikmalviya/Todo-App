@@ -17,7 +17,7 @@ const {home, createTodo, addTask, getTodos, getTodo, deleteTodo, editTodo, delet
 router.get('/',home)
 router.post('/createTodo',createTodo)
 router.post('/addTask',addTask)
-router.get('/getTodos',getTodos)
+router.get('/getTodos/:userId',getTodos)
 router.get('/getTodo/:id',getTodo)
 router.delete('/deleteTodo/:id',deleteTodo)
 router.delete('/deleteTask/', deleteTask);

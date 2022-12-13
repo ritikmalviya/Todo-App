@@ -1,5 +1,4 @@
-const mongoose = require('mongoose')
-
+const mongoose = require("mongoose");
 
 /* 
     Todo Schema consist Two values 
@@ -10,22 +9,31 @@ const mongoose = require('mongoose')
 */
 
 const todoSchema = new mongoose.Schema(
-    {
-        todo: {
-            type: String,
-            require: [true, 'Name is Required'],
-            trim: true
+  {
+    todo: {
+      type: String,
+      require: [true, "Name is Required"],
+      trim: true,
+    },
+    task: [
+      {
+        taskTitle: String,
+        isDone: {
+          type: Boolean,
+          default: false,
         },
-        task: [{
-            taskTitle:String,
-            isDone:{
-                type:Boolean,
-                default:false
-            }
-        }],
-    },{
-        timestamps: true,
-    }
-) 
+      },
+      { timestamps: true },
+    ],
+    userId: {
+      type: String,
+      trim: true,
+      require: [true, "user id is required"],
+    },
+  },
+  {
+    timestamps: true,
+  }
+);
 
-module.exports = mongoose.model('Todo',todoSchema)
+module.exports = mongoose.model("Todo", todoSchema);
