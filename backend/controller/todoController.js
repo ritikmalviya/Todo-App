@@ -199,15 +199,15 @@ exports.isDone = async (req, res) => {
 exports.search = async (req, res) => {
   try {
     const { search, userId } = req.body;
-    const regex = new RegExp(search, "i");
-
-    // const searchTodo = await Todo.find({ $or: [{todo:{$regex:search, $options: "i"}}, {'task.title': {$regex: query, $options: "i"}}],userId})
-    // console.log(searchTodo)
-    // searchTodo.map((obj)=>{
-    //   let arrayOfObj = obj.task.filter(task => task.taskTitle.match(regex) !== null );
-    //   obj.task = arrayOfObj
-    // })
-
+    if(search == ''){
+      const todos = await Todo.find({ userId });
+      return res.status(200).json({
+        success: true,
+        message: "Search result are",
+        todos
+      });
+    }
+    
     const searchTodo = await Todo.aggregate().search({
       index: "search-todo-task",
       compound: {

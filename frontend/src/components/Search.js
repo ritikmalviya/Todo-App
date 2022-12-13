@@ -15,7 +15,6 @@ const Search = (params) => {
         userId
       }
       const data = await axios.post("/search/", payload);
-      console.log("This is :", data.data.searchTodo);
       setSearchData(data.data.searchTodo);
     }
   };
