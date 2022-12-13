@@ -3,20 +3,17 @@ import { useNavigate, Link } from "react-router-dom";
 
 import { account } from "../appwrite/appwriteConfig";
 import CreateTodo from "./CreateTodo";
-import Todo from "./Todo";
 import Search from './Search'
 
 const Profile = () => {
     const navigate = useNavigate()
     const [userDetails, setUserDetails] = useState();
-    const [flag, setFlag] = useState();
 
     useEffect(()=>{
         const getData = account.get()
         getData.then(
             function(res){
                 setUserDetails(res)
-                console.log(userDetails)
             },
             function(error){
                 console.log(error)
@@ -44,8 +41,8 @@ const Profile = () => {
             </div>
 
 
-            <CreateTodo />
-            <Search/> 
+            <CreateTodo userId={userDetails.$id}/>
+            <Search userId={userDetails.$id}/> 
         </div>
     ):(
         <div>

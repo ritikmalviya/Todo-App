@@ -1,3 +1,4 @@
+const { query } = require("express");
 const { findById } = require("../model/TodoSchema");
 const Todo = require("../model/TodoSchema");
 
@@ -21,24 +22,24 @@ exports.home = (req, res) => {
 exports.createTodo = async (req, res) => {
   try {
     const { todo, taskTitle, userId } = req.body;
-  
+
     if (!todo) {
       res.status(400).send("Enter the Todo Name");
     }
     const todoData = {
       userId,
       todo: todo,
-      task: [{
-        taskTitle: taskTitle
-      }]
-    } 
+      task: [
+        {
+          taskTitle: taskTitle,
+        },
+      ],
+    };
     const newTodo = await Todo.create(todoData);
     res.status(200).send(newTodo);
-    
   } catch (error) {
-      console.log(error)
+    console.log(error);
   }
- 
 };
 
 exports.addTask = async (req, res) => {
@@ -69,8 +70,8 @@ exports.addTask = async (req, res) => {
 
 exports.getTodos = async (req, res) => {
   try {
-    const {userId} = req.params
-    const todos = await Todo.find({userId});
+    const { userId } = req.params;
+    const todos = await Todo.find({ userId });
     res.json(todos);
   } catch (error) {
     console.log(error.message);
@@ -108,11 +109,11 @@ exports.deleteTask = async (req, res) => {
   try {
     // get the data
     const { todoId, taskId } = req.body;
-    console.log(req.body)
+    console.log(req.body);
     //validate the data is given or not
     if (!todoId && taskId) throw new Error("Plase enter todo id and task id");
-    console.log("This is the Task deletion ", todoId, " Task id ", taskId)
-    
+    console.log("This is the Task deletion ", todoId, " Task id ", taskId);
+
     //find the todo where the task is getting deleted
     const todoWhereTaskDelete = await Todo.findById(todoId);
     todoWhereTaskDelete.task.pull({ _id: taskId });
@@ -143,56 +144,53 @@ exports.editTodo = async (req, res) => {
 
 exports.editTask = async (req, res) => {
   try {
-    const {taskId, editedTask } = req.body;
-    
+    const { taskId, editedTask } = req.body;
+
     if (!taskId && !editedTask)
       throw new Error("Please provide task id and editedTask");
-    
-    //find the task with task id and update it
-      await Todo.updateOne(
-        { "task._id": taskId },
-        {
-          $set: {
-            "task.$.taskTitle": editedTask,
-          },
-        }
-      );
-      const todoUpdate = await Todo.findOne({"task._id":taskId})
-      console.log(todoUpdate)
-      res.status(200).json({
-        success: true,
-        message: 'Task edited',
-        todoUpdate
-      })
 
+    //find the task with task id and update it
+    await Todo.updateOne(
+      { "task._id": taskId },
+      {
+        $set: {
+          "task.$.taskTitle": editedTask,
+        },
+      }
+    );
+    const todoUpdate = await Todo.findOne({ "task._id": taskId });
+    console.log(todoUpdate);
+    res.status(200).json({
+      success: true,
+      message: "Task edited",
+      todoUpdate,
+    });
   } catch (error) {
     console.log("The error in editTask controller ", error);
   }
 };
 exports.isDone = async (req, res) => {
   try {
-    const {taskId, isDoneBool } = req.body;
-    
-    if (!taskId )
-      throw new Error("Please provide task id");
-    
-    //find the task with task id and update it
-      await Todo.updateOne(
-        { "task._id": taskId },
-        {
-          $set: {
-            "task.$.isDone": isDoneBool,
-          },
-        }
-      );
-      const taskUpdate = await Todo.findOne({"task._id":taskId})
-      console.log(taskUpdate)
-      res.status(200).json({
-        success: true,
-        message: 'Task edited',
-        taskUpdate
-      })
+    const { taskId, isDoneBool } = req.body;
 
+    if (!taskId) throw new Error("Please provide task id");
+
+    //find the task with task id and update it
+    await Todo.updateOne(
+      { "task._id": taskId },
+      {
+        $set: {
+          "task.$.isDone": isDoneBool,
+        },
+      }
+    );
+    const taskUpdate = await Todo.findOne({ "task._id": taskId });
+    console.log(taskUpdate);
+    res.status(200).json({
+      success: true,
+      message: "Task edited",
+      taskUpdate,
+    });
   } catch (error) {
     console.log("The error in editTask controller ", error);
   }
@@ -200,25 +198,49 @@ exports.isDone = async (req, res) => {
 
 exports.search = async (req, res) => {
   try {
-    const {search} = req.params
-    
+    const { search, userId } = req.body;
+    const regex = new RegExp(search, "i");
+
+    // const searchTodo = await Todo.find({ $or: [{todo:{$regex:search, $options: "i"}}, {'task.title': {$regex: query, $options: "i"}}],userId})
+    // console.log(searchTodo)
+    // searchTodo.map((obj)=>{
+    //   let arrayOfObj = obj.task.filter(task => task.taskTitle.match(regex) !== null );
+    //   obj.task = arrayOfObj
+    // })
+
     const searchTodo = await Todo.aggregate().search({
       index: "search-todo-task",
-      text: {
-        query: search,
-        path: {
-          'wildcard':'*'
-        }
-      }
+      compound: {
+        must: [
+          {
+            text: {
+              query: userId,
+              path: "userId",
+            },
+          },
+          {
+            compound: {
+              should: {
+                text: {
+                  query: search,
+                  path: {
+                    "wildcard": "*",
+                  },
+                },
+              },
+            },
+          },
+        ],
+      },
     });
-    
+    console.log(searchTodo);
+
     res.status(200).json({
       success: true,
-      message: 'Search result are',
-      searchTodo
-    })
+      message: "Search result are",
+      searchTodo,
+    });
   } catch (error) {
-    console.log('error in search controller ',error)
+    console.log("error in search controller ", error);
   }
-  
-}
+};

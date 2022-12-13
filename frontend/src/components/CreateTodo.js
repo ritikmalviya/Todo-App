@@ -1,7 +1,8 @@
 import axios from 'axios'
 import React, { useState } from 'react'
 
-const CreateTodo = () => {
+const CreateTodo = (params) => {
+  const {userId} = params
   
   const [todo, setTodo] = useState("")
   const [task, setTask] = useState("")
@@ -9,6 +10,7 @@ const CreateTodo = () => {
 
   const submitData = async() =>{
     const data = {
+      userId,
       todo: todo,
       taskTitle: task
     }

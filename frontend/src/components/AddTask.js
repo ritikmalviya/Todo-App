@@ -15,9 +15,7 @@ const AddTask = (props) => {
     setTask('')
 
   }
-  useEffect(() => {
-    
-  }, [task])
+  
   
   return (
     <div>

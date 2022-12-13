@@ -1,8 +1,5 @@
 import './App.css';
-import Nav from './components/Nav'
-import Search from './components/Search'
 import Todo from './components/Todo'
-import CreateTodo from './components/CreateTodo'
 import Signup from './components/Signup';
 import Login from './components/Login';
 import { BrowserRouter, Route, Routes} from 'react-router-dom'

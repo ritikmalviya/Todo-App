@@ -1,15 +1,20 @@
 import axios from "axios";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import Todo from "./Todo";
 import TodoBox from "./TodoBox";
 
-const Search = () => {
+const Search = (params) => {
+  const {userId} = params 
   const [searchData, setSearchData] = useState();
   const [search, setSearch] = useState("");
 
   const fetch = async (event) => {
     if (event.key === "Enter") {
-      const data = await axios.get("/search/" + search);
+      const payload = {
+        search,
+        userId
+      }
+      const data = await axios.post("/search/", payload);
       console.log("This is :", data.data.searchTodo);
       setSearchData(data.data.searchTodo);
     }
@@ -38,7 +43,7 @@ const Search = () => {
           )}
           </div>
         ) : (
-          <Todo />
+          <Todo userId= {userId}/>
         )}
       </div>
     </div>

@@ -1,22 +1,20 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import TodoBox from "./TodoBox";
-import Search from "./Search";
 
-const Todo = () => {
+const Todo = (params) => {
+  const {userId} = params;
+
   const [todoData, setTodoData] = useState([]);
-  const [isDone, setIsDone] = useState(false)
-  const [task, setTask] = useState("Task");
-  const [todo, setTodo] = useState("Task");
 
   const fetchTodoData = async () => {
-    const res = await axios.get("/getTodos");
+    const res = await axios.get("/getTodos/"+userId);
     setTodoData(res.data);
   };
 
   useEffect(() => {
     fetchTodoData();
-  }, []);
+  }, [todoData]);
 
   return (
     <div>

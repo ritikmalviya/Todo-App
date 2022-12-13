@@ -24,6 +24,6 @@ router.delete('/deleteTask/', deleteTask);
 router.put('/editTodo/:id',editTodo)
 router.put("/editTask", editTask);
 router.put("/isdone", isDone);
-router.get('/search/:search', search)
+router.post('/search/', search)
 
 module.exports = router;

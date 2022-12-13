@@ -4,9 +4,8 @@ import React, { useEffect, useState } from "react";
 const TaskBox = (props) => {
   const { taskData, todoId } = props;
   const [edit, setEdit] = useState(false);
-  const [task, setTask] = useState('');
+  const [task, setTask] = useState("");
   const [isDone, setIsDone] = useState(false);
-  
 
   const deleteTask = async (todosId, taskId) => {
     const datas = {
@@ -14,31 +13,29 @@ const TaskBox = (props) => {
       taskId: taskId,
     };
     await axios.delete("/deleteTask", { data: datas });
-    setEdit(false)
+    setEdit(false);
   };
 
-  const submitChange = async()=>{
+  const submitChange = async () => {
     const data = {
       taskId: taskData._id,
-      editedTask:task,
+      editedTask: task,
     };
-    await axios.put('/editTask',data)
-    setEdit(false)
-  }
-  const isDoneChange = async(event)=>{
-    setIsDone(event.target.checked)
+    await axios.put("/editTask", data);
+    setEdit(false);
+  };
+  const isDoneChange = async (event) => {
+    setIsDone(event.target.checked);
     const data = {
       taskId: taskData._id,
-      isDoneBool: !isDone
-    }
-    console.log(!isDone)
-        await axios.put('/isDone',data)
-  }
+      isDoneBool: !isDone,
+    };
+    await axios.put("/isDone", data);
+  };
   useEffect(() => {
     setTask(taskData.taskTitle);
-    setIsDone(taskData.isDone)
-  }, [edit])
-  
+    setIsDone(taskData.isDone);
+  }, [taskData.taskTitle, taskData.isDone]);
 
   return (
     <div>
