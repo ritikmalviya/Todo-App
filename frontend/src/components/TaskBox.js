@@ -5,7 +5,9 @@ const TaskBox = (props) => {
   const { taskData, todoId } = props;
   const [edit, setEdit] = useState(false);
   const [task, setTask] = useState('');
+  const [isDone, setIsDone] = useState(false);
   
+
   const deleteTask = async (todosId, taskId) => {
     const datas = {
       todoId: todosId,
@@ -23,8 +25,18 @@ const TaskBox = (props) => {
     await axios.put('/editTask',data)
     setEdit(false)
   }
+  const isDoneChange = async(event)=>{
+    setIsDone(event.target.checked)
+    const data = {
+      taskId: taskData._id,
+      isDoneBool: !isDone
+    }
+    console.log(!isDone)
+        await axios.put('/isDone',data)
+  }
   useEffect(() => {
     setTask(taskData.taskTitle);
+    setIsDone(taskData.isDone)
   }, [edit])
   
 
@@ -33,7 +45,8 @@ const TaskBox = (props) => {
       <div className="flex ml-4">
         <input
           type="checkbox"
-          // checked={taskData.isDone}
+          checked={isDone}
+          onChange={isDoneChange}
           name=""
           id=""
           className="bg-transparent accent-transparent"
